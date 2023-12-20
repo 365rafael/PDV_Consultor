@@ -16,16 +16,29 @@
         <tr>
             <th>Nome do Produto</th>
             <th>Quantidade</th>
+            <th>Valor estoque</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var produto in Model.Where(p => p.Ativo == true).GroupBy(p => p.ProdutoId))
         {
+            var nomeProduto = produto.First().Produto.Nome;
+            var quantidade = produto.Count();
+            var valorTotal = produto.Sum(p => p.Preco);
+
             <tr>
-                <td>@produto.First().Produto.Nome</td>
-                <td>@produto.Count()</td>
+                <td>@nomeProduto</td>
+                <td>@quantidade</td>
+                <td>@valorTotal</td>
             </tr>
         }
+
+        <!-- Total Geral -->
+        <tr>
+            <td><strong>Total Geral</strong></td>
+            <td><strong>@Model.Where(p => p.Ativo == true).Count()</strong></td>
+            <td><strong>@Model.Where(p => p.Ativo == true).Sum(p => p.Preco)</strong></td>
+        </tr>
     </tbody>
 </table>
 <br/>
@@ -39,7 +52,7 @@
                 @Html.DisplayNameFor(model => model.SerialNumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Preco)
+                Preço de custo
             </th>
             <th></th>
         </tr>

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PDV_Consultor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+04f8143aa43b8dec3bb4336bfbfc34ae3c0d59f2")]
 [assembly: System.Reflection.AssemblyProductAttribute("PDV_Consultor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PDV_Consultor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -58,13 +58,11 @@ namespace PDV_Consultor.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Nome")] Produto produto)
         {
-            if (ModelState.IsValid)
-            {
+           
                 _context.Add(produto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            return View(produto);
+           
         }
 
         // GET: Produtos/Edit/5

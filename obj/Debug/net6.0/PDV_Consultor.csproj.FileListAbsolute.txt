@@ -269,3 +269,4 @@ C:\Projetos\PDV_Consultor\obj\Debug\net6.0\PDV_Consultor.RazorAssemblyInfo.cache
 C:\Projetos\PDV_Consultor\obj\Debug\net6.0\PDV_Consultor.RazorAssemblyInfo.cs
 C:\Projetos\PDV_Consultor\obj\Debug\net6.0\scopedcss\projectbundle\PDV_Consultor.bundle.scp.css
 C:\Projetos\PDV_Consultor\obj\Debug\net6.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Projetos\PDV_Consultor\obj\Debug\net6.0\PDV_Consultor.sourcelink.json
