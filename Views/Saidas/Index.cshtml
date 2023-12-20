@@ -1,0 +1,218 @@
+﻿@model IEnumerable<PDV_Consultor.Models.Saida>
+
+@{
+    ViewData["Title"] = "Saída de estoque";
+    DateTime? startDate = ViewData["StartDate"] as DateTime?;
+    DateTime? endDate = ViewData["EndDate"] as DateTime?;
+}
+
+<h1>Saída de estoque</h1>
+
+
+<p>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create")'">Registrar nova venda</button>
+</p>
+
+
+<form asp-action="Index" method="get">
+    <div class="form-row">
+        <div class="">
+            <label for="startDate">Data inicial:</label>
+            <input type="date" id="startDate" name="startDate" class="form-control-inline" />
+        </div>
+        <br />
+        <div class="">
+            <label for="endDate">Data final:</label>
+            <input type="date" id="endDate" name="endDate" class="form-control-inline" />
+        </div>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">Filtrar data</button>
+</form>
+
+<br/>
+<div>
+    @if (startDate.HasValue && endDate.HasValue)
+    {
+        <p>Exibindo resultados para o período de @startDate.Value.ToShortDateString() a @endDate.Value.ToShortDateString()</p>
+    }
+    else
+    {
+        <p>Exibindo todos os resultados</p>
+    }
+</div>
+<br/>
+
+<!-- Tabela de Resumo -->
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome do Produto</th>
+                <th>Quantidade</th>
+                <th>Valor Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var nomeProduto in Model.Select(item => GetNomeProduto(item.SerialNumber)).Distinct())
+            {
+                var quantidadeProduto = Model.Count(item => GetNomeProduto(item.SerialNumber) == nomeProduto);
+                var valorTotalProduto = Model.Where(item => GetNomeProduto(item.SerialNumber) == nomeProduto).Sum(item => item.Preco);
+
+                <tr>
+                    <td>@nomeProduto</td>
+                    <td>@quantidadeProduto</td>
+                    <td>@valorTotalProduto.ToString("C")</td>
+                </tr>
+            }
+            <tr>
+                <td><strong>Total Geral</strong></td>
+                <td><strong>@Model.Count()</strong></td>
+                <td><strong>@Model.Sum(item => item.Preco).ToString("C")</strong></td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Não há dados para exibir.</p>
+}
+
+@functions {
+    // Função para determinar o nome do produto com base no SerialNumber
+    string GetNomeProduto(string serialNumber)
+    {
+        if (serialNumber.StartsWith("6"))
+        {
+            return "Top";
+        }
+        else if (serialNumber.StartsWith("1"))
+        {
+            return "On";
+        }
+        else if (serialNumber.StartsWith("5C"))
+        {
+            return "Total";
+        }
+        else if (serialNumber.StartsWith("5F"))
+        {
+            return "Total";
+        }
+        else if (serialNumber.StartsWith("2"))
+        {
+            return "Solo";
+        }
+        else if (serialNumber.StartsWith("50"))
+        {
+            return "Impressora";
+        }
+
+        return "Desconhecido";
+    }
+}
+
+<br/>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProdutoItem.Produto.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SerialNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataSaida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NomeCliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClienteNovo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Troca)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Preco)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (item.SerialNumber.StartsWith("6") )
+                    {
+                        <p>Top</p>
+                    }
+                    @if (item.SerialNumber.StartsWith("1") )
+                    {
+                        <p>On</p>
+                    }
+                    @if (item.SerialNumber.StartsWith("5C") )
+                    {
+                        <p>Total</p>
+                    }
+                    @if (item.SerialNumber.StartsWith("5F") )
+                    {
+                        <p>Total</p>
+                    }
+                    @if (item.SerialNumber.StartsWith("2") )
+                    {
+                        <p>Solo</p>
+                    }
+                    @if (item.SerialNumber.StartsWith("50") )
+                    {
+                        <p>Impressora</p>
+                    }
+                    
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SerialNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataSaida)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NomeCliente)
+                </td>
+                <td>
+                    @if (item.ClienteNovo)
+                    {
+                        <p>Sim</p>
+                    }
+                    else
+                    {
+                        <p>Não</p>
+                    }
+                </td>
+                <td>
+                    @if (item.Troca)
+                    {
+                        <p>Sim</p>
+                    }
+                    else
+                    {
+                        <p>Não</p>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Preco)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

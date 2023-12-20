@@ -1,0 +1,68 @@
+﻿
+@model IEnumerable<PDV_Consultor.Models.ProdutoItem>
+
+@{
+    ViewData["Title"] = "Estoque";
+}
+
+<h1>Estoque</h1>
+
+<p>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create")'">Cadastrar</button>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome do Produto</th>
+            <th>Quantidade</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var produto in Model.Where(p => p.Ativo == true).GroupBy(p => p.ProdutoId))
+        {
+            <tr>
+                <td>@produto.First().Produto.Nome</td>
+                <td>@produto.Count()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br/>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Produto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SerialNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Preco)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+           <td>
+                @Html.DisplayFor(modelItem => item.Produto.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SerialNumber)
+            </td> 
+            <td>
+                @Html.DisplayFor(modelItem => item.Preco)
+            </td>
+           
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SerialNumber">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SerialNumber">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SerialNumber">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

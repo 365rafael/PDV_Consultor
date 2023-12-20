@@ -1,0 +1,79 @@
+﻿@model PDV_Consultor.Models.Saida
+
+@*@{
+    ViewData["Title"] = "Create";
+}*@
+
+<h1>Venda de Produtos</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DataSaida" class="control-label">Data da Venda</label>
+                <input asp-for="DataSaida" class="form-control" />
+                <span asp-validation-for="DataSaida" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NomeCliente" class="control-label">Nome do Cliente</label>
+                <input asp-for="NomeCliente" class="form-control" />
+                <span asp-validation-for="NomeCliente" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Preco" class="control-label">Preço (0.00)</label>
+                <input asp-for="Preco" class="form-control" />
+                <span asp-validation-for="Preco" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SerialNumber" class="control-label">S/N da Máquina</label>
+                <select asp-for="SerialNumber" class="form-control" asp-items="@ViewBag.SerialNumber">
+                    <option value="">Selecione a máquina vendida</option>
+                </select>
+                <span asp-validation-for="SerialNumber" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-group">
+                <label asp-for="ClienteNovo" class="control-label">Cliente Novo</label>
+                <div>
+                    <label class="radio-inline">
+                        <input type="radio" asp-for="ClienteNovo" value="true" /> Sim
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" asp-for="ClienteNovo" value="false" /> Não
+                    </label>
+                </div>
+                <span asp-validation-for="ClienteNovo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Troca" class="control-label">Troca</label>
+                <div>
+                    <label class="radio-inline">
+                        <input type="radio" asp-for="Troca" value="true" /> Sim
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" asp-for="Troca" value="false" /> Não
+                    </label>
+                </div>
+                <span asp-validation-for="Troca" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<div>
+    <a asp-action="Index">Voltar</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

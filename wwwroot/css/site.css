@@ -1,0 +1,41 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    
+}
+
+.index-background {
+    background-image: url('/bg.jpg');
+    background-size: cover;
+    
+    
+}
+
+.titulo {
+    font-size: 80px;
+    color: aliceblue;
+    align-items: center;
+    justify-content: center;
+    margin-top: 100px;
+    font-style: italic;
+    text-shadow: 3px 3px 5px rgb(255, 106, 0);
+}
+
+.navbar-nav-spaced .nav-item {
+    margin-right: 80px;
+    font-size: 22px;
+}
