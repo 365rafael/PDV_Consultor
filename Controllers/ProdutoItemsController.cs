@@ -80,7 +80,7 @@ namespace PDV_Consultor.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProdutoId"] = new SelectList(_context.Produtos, "ID", "ID", produtoItem.ProdutoId);
+            ViewData["ProdutoId"] = new SelectList(_context.Produtos, "ID", "Nome", produtoItem.ProdutoId);
             return View(produtoItem);
         }
 
@@ -89,7 +89,7 @@ namespace PDV_Consultor.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("SerialNumber,ProdutoId,Preco")] ProdutoItem produtoItem)
+        public async Task<IActionResult> Edit(string id, [Bind("SerialNumber,ProdutoId,Preco,Ativo")] ProdutoItem produtoItem)
         {
             if (id != produtoItem.SerialNumber)
             {
@@ -101,6 +101,7 @@ namespace PDV_Consultor.Controllers
                 try
                 {
                     produtoItem.Preco = produtoItem.Preco / 100;
+                    produtoItem.Ativo = true;
                     _context.Update(produtoItem);
                     await _context.SaveChangesAsync();
                 }
@@ -117,7 +118,7 @@ namespace PDV_Consultor.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProdutoId"] = new SelectList(_context.Produtos, "ID", "ID", produtoItem.ProdutoId);
+            ViewData["ProdutoId"] = new SelectList(_context.Produtos, "ID", "Nome", produtoItem.ProdutoId);
             return View(produtoItem);
         }
 

@@ -23,7 +23,7 @@ namespace PDV_Consultor.Controllers
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
         {
             var saidas = await _context.Saidas.Include(s => s.ProdutoItem).ToListAsync();
-
+            var produtos = await _context.ProdutoItems.Include(p => p.Produto).ToListAsync();
             // Se startDate não foi especificada, define-a como o primeiro dia do mês atual
             if (!startDate.HasValue)
             {
@@ -40,6 +40,7 @@ namespace PDV_Consultor.Controllers
             saidas = saidas.Where(s => s.DataSaida >= startDate.Value && s.DataSaida <= endDate.Value).ToList();
             ViewData["StartDate"] = startDate;
             ViewData["EndDate"] = endDate;
+            ViewData["Produtos"] = produtos;
 
             return View(saidas);
         }
@@ -88,7 +89,7 @@ namespace PDV_Consultor.Controllers
             _context.Add(saida);
             await _context.SaveChangesAsync();
 
-            var produtoItem = await _context.ProdutoItems.FirstOrDefaultAsync(pi=> pi.SerialNumber == saida.SerialNumber);
+            var produtoItem = await _context.ProdutoItems.FirstOrDefaultAsync(pi => pi.SerialNumber == saida.SerialNumber);
 
             if (produtoItem != null)
             {
@@ -128,25 +129,26 @@ namespace PDV_Consultor.Controllers
                 return NotFound();
             }
 
-            
-                try
+
+            try
+            {
+                saida.Preco = saida.Preco / 100;
+                _context.Update(saida);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SaidaExists(saida.Id))
                 {
-                    _context.Update(saida);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!SaidaExists(saida.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
-           
+            }
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Saidas/Delete/5
@@ -179,6 +181,8 @@ namespace PDV_Consultor.Controllers
             var saida = await _context.Saidas.FindAsync(id);
             if (saida != null)
             {
+                ProdutoItem produtoItem = await _context.ProdutoItem.FindAsync(saida.SerialNumber);
+                produtoItem.Ativo = true;
                 _context.Saidas.Remove(saida);
             }
 

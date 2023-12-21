@@ -93,9 +93,7 @@ namespace PDV_Consultor.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
+            try
                 {
                     _context.Update(produto);
                     await _context.SaveChangesAsync();
@@ -112,8 +110,7 @@ namespace PDV_Consultor.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            return View(produto);
+            
         }
 
         // GET: Produtos/Delete/5

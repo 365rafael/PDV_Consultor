@@ -1,4 +1,5 @@
-﻿@model IEnumerable<PDV_Consultor.Models.Saida>
+﻿@using PDV_Consultor.Models
+@model IEnumerable<PDV_Consultor.Models.Saida>
 
 @{
     ViewData["Title"] = "Saída de estoque";
@@ -44,7 +45,7 @@
 <br/>
 
 <!-- Tabela de Resumo -->
-@if (Model != null && Model.Any())
+@if (ViewData["Produtos"] != null)
 {
     <table class="table">
         <thead>
@@ -52,24 +53,46 @@
                 <th>Nome do Produto</th>
                 <th>Quantidade</th>
                 <th>Valor Total</th>
+                <th>Lucro</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var nomeProduto in Model.Select(item => GetNomeProduto(item.SerialNumber)).Distinct())
+            @{
+                var produtos = (IEnumerable<ProdutoItem>)ViewData["Produtos"];
+                var groupedData = Model.GroupBy(item => produtos.FirstOrDefault(p => p.SerialNumber == item.SerialNumber)?.Produto?.Nome);
+            }
+
+            @foreach (var group in groupedData)
             {
-                var quantidadeProduto = Model.Count(item => GetNomeProduto(item.SerialNumber) == nomeProduto);
-                var valorTotalProduto = Model.Where(item => GetNomeProduto(item.SerialNumber) == nomeProduto).Sum(item => item.Preco);
+                var nomeProduto = group.Key;
+                var quantidadeProduto = group.Count();
+                var valorTotalProduto = group.Sum(item => item.Preco);
+
+                // Obtém os dados do ProdutoItem correspondente
+                var produtoItem = produtos.FirstOrDefault(p => p.Produto?.Nome == nomeProduto);
+
+                // Calcula o lucro
+                var lucroProduto = valorTotalProduto - (quantidadeProduto * (produtoItem?.Preco ?? 0));
 
                 <tr>
                     <td>@nomeProduto</td>
                     <td>@quantidadeProduto</td>
                     <td>@valorTotalProduto.ToString("C")</td>
+                    <td>@lucroProduto.ToString("C")</td>
                 </tr>
             }
+
             <tr>
                 <td><strong>Total Geral</strong></td>
                 <td><strong>@Model.Count()</strong></td>
                 <td><strong>@Model.Sum(item => item.Preco).ToString("C")</strong></td>
+                <td><strong>@Model.Sum(item => CalculateLucro(item)).ToString("C")</strong></td>
+            </tr>
+
+            <tr>
+                <td><strong>Clientes Novos</strong></td>
+                <td><strong>@Model.Count(item => item.ClienteNovo)</strong></td>
+                <td colspan="2"></td>
             </tr>
         </tbody>
     </table>
@@ -79,43 +102,23 @@ else
     <p>Não há dados para exibir.</p>
 }
 
-@functions {
-    // Função para determinar o nome do produto com base no SerialNumber
-    string GetNomeProduto(string serialNumber)
-    {
-        if (serialNumber.StartsWith("6"))
-        {
-            return "Top";
-        }
-        else if (serialNumber.StartsWith("1"))
-        {
-            return "On";
-        }
-        else if (serialNumber.StartsWith("5C"))
-        {
-            return "Total";
-        }
-        else if (serialNumber.StartsWith("5F"))
-        {
-            return "Total";
-        }
-        else if (serialNumber.StartsWith("2"))
-        {
-            return "Solo";
-        }
-        else if (serialNumber.StartsWith("50"))
-        {
-            return "Impressora";
-        }
 
-        return "Desconhecido";
+
+@functions {
+    // Função para calcular o lucro de um item
+    decimal CalculateLucro(Saida item)
+    {
+        var produtoItem = ((IEnumerable<ProdutoItem>)ViewData["Produtos"])
+            .FirstOrDefault(p => p.SerialNumber == item.SerialNumber);
+
+        return (item.Preco - produtoItem?.Preco) ?? 0;
     }
 }
 
 <br/>
 
 
-
+<!-- Tabela de Vendas -->
 <table class="table">
     <thead>
         <tr>
@@ -148,32 +151,12 @@ else
         {
             <tr>
                 <td>
-                    @if (item.SerialNumber.StartsWith("6") )
-                    {
-                        <p>Top</p>
+                    @{
+                        var produtoItem = ((IEnumerable<ProdutoItem>)ViewData["Produtos"])
+                        .FirstOrDefault(p => p.SerialNumber == item.SerialNumber);
+                        var nomeProduto = produtoItem?.Produto.Nome ?? "Desconhecido";
                     }
-                    @if (item.SerialNumber.StartsWith("1") )
-                    {
-                        <p>On</p>
-                    }
-                    @if (item.SerialNumber.StartsWith("5C") )
-                    {
-                        <p>Total</p>
-                    }
-                    @if (item.SerialNumber.StartsWith("5F") )
-                    {
-                        <p>Total</p>
-                    }
-                    @if (item.SerialNumber.StartsWith("2") )
-                    {
-                        <p>Solo</p>
-                    }
-                    @if (item.SerialNumber.StartsWith("50") )
-                    {
-                        <p>Impressora</p>
-                    }
-                    
-
+                    @nomeProduto
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SerialNumber)
