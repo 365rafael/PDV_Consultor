@@ -54,12 +54,15 @@
                 <th>Quantidade</th>
                 <th>Valor Total</th>
                 <th>Lucro</th>
+                <th>%</th>
             </tr>
         </thead>
         <tbody>
             @{
                 var produtos = (IEnumerable<ProdutoItem>)ViewData["Produtos"];
                 var groupedData = Model.GroupBy(item => produtos.FirstOrDefault(p => p.SerialNumber == item.SerialNumber)?.Produto?.Nome);
+                var percentualTotal = Model.Sum(item => CalculateLucro(item)) / Model.Sum(item => item.Preco) *100;
+                var percentualClienteNovo = (Model.Count(item => item.ClienteNovo) * 100) / Model.Count();
             }
 
             @foreach (var group in groupedData)
@@ -73,12 +76,16 @@
 
                 // Calcula o lucro
                 var lucroProduto = valorTotalProduto - (quantidadeProduto * (produtoItem?.Preco ?? 0));
+                // Calcula %
+                var percentualLucro = lucroProduto / valorTotalProduto * 100;
+
 
                 <tr>
                     <td>@nomeProduto</td>
                     <td>@quantidadeProduto</td>
                     <td>@valorTotalProduto.ToString("C")</td>
                     <td>@lucroProduto.ToString("C")</td>
+                    <td title="% de lucro">@percentualLucro.ToString("N2") %</td>
                 </tr>
             }
 
@@ -87,12 +94,15 @@
                 <td><strong>@Model.Count()</strong></td>
                 <td><strong>@Model.Sum(item => item.Preco).ToString("C")</strong></td>
                 <td><strong>@Model.Sum(item => CalculateLucro(item)).ToString("C")</strong></td>
+                <td title="% de lucro total"><strong>@percentualTotal.ToString("N2") %</strong></td>
             </tr>
+                
 
             <tr>
                 <td><strong>Clientes Novos</strong></td>
                 <td><strong>@Model.Count(item => item.ClienteNovo)</strong></td>
                 <td colspan="2"></td>
+                <td title="% de clientes novos"><strong>@percentualClienteNovo.ToString("N2") %</strong></td>
             </tr>
         </tbody>
     </table>
@@ -113,6 +123,7 @@ else
 
         return (item.Preco - produtoItem?.Preco) ?? 0;
     }
+    
 }
 
 <br/>
